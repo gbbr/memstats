@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>MemStats Viewer</title>
+	</head>
+	<body>
+		<script id="ms-viewer-template" type="template/text">
+			<%= Alloc %>
+		</script>
+		<div id="ms-viewer"></div>
+
+		<script src="scripts/underscore-min.js"></script>
+		<script>
+			var ws = new WebSocket("ws://{{.ListenAddr}}/memstats-feed")
+			var tpl = _.template(document.getElementById("ms-viewer-template").innerHTML)
+
+			ws.onopen = function (event) {
+				console.log("MEMSTAT: Connected.");
+				ws.onmessage = function (evt) {
+					document.getElementById("ms-viewer").innerHTML = tpl(JSON.parse(evt.data));
+				}
+			}
+
+			ws.onclose = function () {
+				console.log("MEMSTAT: Disconnected.")
+			}
+		</script>
+	</body>
+</html>
