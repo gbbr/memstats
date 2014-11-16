@@ -9,7 +9,7 @@
 		<div class="group">
 			<h3>General</h3>
 			<div class="cell">
-				Allocated + In use: <% Alloc %>
+				Allocated + In use: <%= Alloc %>
 			</div>
 			<div class="cell">
 				Total + Freed: <%= TotalAlloc %> 
@@ -59,14 +59,14 @@
 			<!--	Sys is bytes obtained from system.-->
 			<div class="cell">
 				Stack:
-				<%= StackInuse %> / <%= StackSys %> 
+				<%= StackInuse %> of <%= StackSys %> 
 			</div>
 			<div class="cell">
 				MSpan:
-				<%= MSpanInuse %> / <%= MSpanSys %> 
+				<%= MSpanInuse %> of <%= MSpanSys %> 
 			</div>
 			<div class="cell">
-				MCache: <%= MCacheInuse %> / <%= MCacheSys %> 
+				MCache: <%= MCacheInuse %> of <%= MCacheSys %> 
 			</div>
 			<br />
 			<div class="cell">
@@ -82,9 +82,11 @@
 
 		<div class="group">
 			<h3>Garbage collector</h2>
-			Next heap alloc: <%= NextGC %>
 			<div class="cell">
-				Last: <%= LastGC %>
+				Next run: <%= NextGC %>
+			</div>
+			<div class="cell">
+				Last run: <%= LastGC %>
 			</div>
 			<div class="cell">
 				PauseTotalNs: <%= PauseTotalNs %>
@@ -92,11 +94,12 @@
 			<div class="cell">
 				NumGC: <%= NumGC %>
 			</div>
+			<br />
 			<div class="cell">
-				EnableGC: <%= EnableGC %>
+				Enabled: <%= EnableGC %>
 			</div>
 			<div class="cell">
-				DebugGC: <%= DebugGC %>
+				Debug mode: <%= DebugGC %>
 			</div>
 		</divlen(d.change)-1:len(d.change)>
 
