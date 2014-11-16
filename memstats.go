@@ -93,7 +93,7 @@ func resolveFuncs(stk []uintptr) []string {
 	return fnpc[:n]
 }
 
-func (s server) payloadMem(p []runtime.MemProfileRecord) []memProfile {
+func payloadMem(p []runtime.MemProfileRecord) []memProfile {
 	prof := make([]memProfile, len(p))
 	for i, e := range p {
 		prof[i] = memProfile{
@@ -112,7 +112,7 @@ func (s server) ServeMemProfile(ws *websocket.Conn) {
 	for {
 		n, ok := runtime.MemProfile(prof, false)
 		if ok {
-			err := websocket.JSON.Send(ws, s.payloadMem(prof[:n]))
+			err := websocket.JSON.Send(ws, payloadMem(prof[:n]))
 			if err != nil {
 				break
 			}
