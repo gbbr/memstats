@@ -1,6 +1,5 @@
 Example program:
 
-`main.go`
 ```go
 package main
 
