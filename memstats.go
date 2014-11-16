@@ -33,7 +33,6 @@ func Serve(opts ...func(*server)) {
 
 	mux := http.NewServeMux()
 	mux.Handle("/", s)
-	mux.Handle("/scripts/", http.FileServer(http.Dir("web")))
 	mux.Handle("/memstats-feed", websocket.Handler(s.ServeSocket))
 	if err = http.Serve(ln, mux); err != nil {
 		log.Fatalf("memstat: %s", err)
