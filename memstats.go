@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"html/template"
 	"log"
 	"net"
 	"net/http"
@@ -13,6 +12,7 @@ import (
 	"runtime/pprof"
 	"time"
 
+	"github.com/gbbr/memstats/internal/view"
 	"golang.org/x/net/websocket"
 )
 
@@ -44,12 +44,12 @@ func Serve(opts ...func(*server)) {
 }
 
 func (s server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	t, err := template.ParseFiles("web/viewer.html")
+	t, err := view.Render()
 	if err != nil {
 		fmt.Fprintf(w, "Error parsing template: %s", err)
 		return
 	}
-	if err := t.Execute(w, s); err != nil {
+	if err := t.ExecuteTemplate(w, "main", s); err != nil {
 		fmt.Fprintf(w, "Error parsing template: %s", err)
 	}
 }

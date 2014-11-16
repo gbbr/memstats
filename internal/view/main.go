@@ -1,8 +1,14 @@
+package view
+
+var rootView = `
+{{define "main"}}
 <!DOCTYPE html>
 <html>
 	<head>
 		<title>MemStats Viewer</title>
-		<link rel="stylesheet" href="scripts/main.css" />
+		<style>
+			{{template "stylesheet"}}
+		</style>
 	</head>
 	<body>
 		<script id="ms-viewer-template" type="template/text">
@@ -106,7 +112,9 @@
 		</script>
 		<div id="ms-viewer"></div>
 
-		<script src="scripts/underscore-min.js"></script>
-		<script src="scripts/main.js"></script>
+		<script>{{template "underscoreJS"}}</script>
+		<script>{{template "mainJS"}}</script>
 	</body>
 </html>
+{{end}}
+`
