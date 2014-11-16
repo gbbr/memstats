@@ -3,19 +3,10 @@ Example program:
 ```go
 package main
 
-import (
-	"os"
-	"os/signal"
-
-	"github.com/gbbr/memstats"
-)
+import "github.com/gbbr/memstats"
 
 func main() {
-	go memstats.Serve()
-
-	sig := make(chan os.Signal, 1)
-	signal.Notify(sig, os.Interrupt)
-	<-sig
+	memstats.Serve()
 }
 ```
 
