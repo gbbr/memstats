@@ -1,6 +1,7 @@
 Example program:
 
 ```go
+// filename: main.go
 package main
 
 import "github.com/gbbr/memstats"
