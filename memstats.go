@@ -28,6 +28,7 @@ func Serve(opts ...func(*server)) {
 	if err != nil {
 		log.Fatalf("memstat: %s", err)
 	}
+	defer ln.Close()
 	s.ListenAddr = ln.Addr().String()
 
 	mux := http.NewServeMux()
