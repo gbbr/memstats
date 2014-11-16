@@ -20,7 +20,7 @@ var mainJS = `
 				"MSpanSys", "MCacheInuse", "MCacheSys", "NextGC"
 
 			].forEach(function (key) {
-				humanized.Stats[key] = bytesToSize(memdata.Stats[key]); 
+				humanized[key] = bytesToSize(memdata[key]);
 			}); 
 
 			document.getElementById("ms-viewer").innerHTML = tpl(humanized);

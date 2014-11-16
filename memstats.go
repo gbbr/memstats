@@ -51,12 +51,10 @@ func (s server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 }
 
 func (s server) ServeMemStats(ws *websocket.Conn) {
-	payload := struct {
-		Stats runtime.MemStats
-	}{}
+	var buf runtime.MemStats
 	for {
-		runtime.ReadMemStats(&payload.Stats)
-		err := websocket.JSON.Send(ws, payload)
+		runtime.ReadMemStats(&buf)
+		err := websocket.JSON.Send(ws, buf)
 		if err != nil {
 			break
 		}

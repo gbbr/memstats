@@ -19,7 +19,7 @@ var rootView = `
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>MemStats Viewer</title>
+		<title>MemViewer</title>
 		<style>
 			{{template "stylesheet"}}
 		</style>
@@ -29,46 +29,46 @@ var rootView = `
 		<div class="group">
 			<h3>General</h3>
 			<div class="cell">
-				Allocated and using: <%= Stats.Alloc %>
+				Allocated and using: <%= Alloc %>
 			</div>
 			<div class="cell">
-				Total + Freed: <%= Stats.TotalAlloc %> 
+				Total + Freed: <%= TotalAlloc %>
 			</div>
 			<div class="cell">
-				System: <%= Stats.Sys %> 
+				System: <%= Sys %>
 			</div>
 			<br />
 			<div class="cell">
-				Lookups: <%= Stats.Lookups %>
+				Lookups: <%= Lookups %>
 			</div>
 			<div class="cell">
-				Frees: <%= Stats.Frees %>
+				Frees: <%= Frees %>
 			</div>
 			<div class="cell">
-				mallocs: <%= Stats.Mallocs %>
+				mallocs: <%= Mallocs %>
 			</div>
 		</div>
 
 		<div class="group">
 			<h3>Heap</h3>
 			<div class="cell">
-				Allocated and using: <%= Stats.HeapAlloc %> 
+				Allocated and using: <%= HeapAlloc %>
 			</div>
 			<div class="cell">
-				System: <%= Stats.HeapSys %> 
+				System: <%= HeapSys %>
 			</div>
 			<div class="cell">
-				Idle: <%= Stats.HeapIdle %> 
+				Idle: <%= HeapIdle %>
 			</div>
 			<div class="cell">
-				In use: <%= Stats.HeapInuse %> 
+				In use: <%= HeapInuse %>
 			</div>
 			<div class="cell">
-				Released: <%= Stats.HeapReleased %> 
+				Released: <%= HeapReleased %>
 			</div>
 			<br />
 			<div class="cell">
-				Objects: <%= Stats.HeapObjects %>
+				Objects: <%= HeapObjects %>
 			</div>
 		</div>
 
@@ -79,47 +79,47 @@ var rootView = `
 			<!--	Sys is bytes obtained from system.-->
 			<div class="cell">
 				Stack:
-				<%= Stats.StackInuse %> of <%= Stats.StackSys %> 
+				<%= StackInuse %> of <%= StackSys %>
 			</div>
 			<div class="cell">
 				MSpan:
-				<%= Stats.MSpanInuse %> of <%= Stats.MSpanSys %> 
+				<%= MSpanInuse %> of <%= MSpanSys %>
 			</div>
 			<div class="cell">
-				MCache: <%= Stats.MCacheInuse %> of <%= Stats.MCacheSys %> 
+				MCache: <%= MCacheInuse %> of <%= MCacheSys %>
 			</div>
 			<br />
 			<div class="cell">
-				BuckHashSys: <%= Stats.BuckHashSys %>
+				BuckHashSys: <%= BuckHashSys %>
 			</div>
 			<div class="cell">
-				GCSys: <%= Stats.GCSys %>
+				GCSys: <%= GCSys %>
 			</div>
 			<div class="cell">
-				Other: <%= Stats.OtherSys %>
+				Other: <%= OtherSys %>
 			</div>
 		</div>
 
 		<div class="group">
 			<h3>Garbage collector</h2>
 			<div class="cell">
-				Next run: <%= Stats.NextGC %>
+				Next run: <%= NextGC %>
 			</div>
 			<div class="cell">
-				Last run: <%= Stats.LastGC %>
+				Last run: <%= LastGC %>
 			</div>
 			<div class="cell">
-				Pause: <%= Stats.PauseTotalNs %>
+				Pause: <%= PauseTotalNs %>
 			</div>
 			<div class="cell">
-				Runs: <%= Stats.NumGC %>
+				Runs: <%= NumGC %>
 			</div>
 			<br />
 			<div class="cell">
-				Enabled: <%= Stats.EnableGC %>
+				Enabled: <%= EnableGC %>
 			</div>
 			<div class="cell">
-				Debug: <%= Stats.DebugGC %>
+				Debug: <%= DebugGC %>
 			</div>
 		</div>
 
