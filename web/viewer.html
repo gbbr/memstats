@@ -2,22 +2,133 @@
 <html>
 	<head>
 		<title>MemStats Viewer</title>
+		<link rel="stylesheet" href="scripts/main.css" />
 	</head>
 	<body>
 		<script id="ms-viewer-template" type="template/text">
-			<%= Alloc %>
+		<div class="group">
+			<h3>General</h3>
+			// General statistics.
+			<div class="cell">
+				Allocations: <%= Alloc %>
+			</div>
+			<div class="cell">
+				Total: <%= TotalAlloc %>
+			</div>
+			<div class="cell">
+				System: <%= Sys %>
+			</div>
+			<div class="cell">
+				Lookups: <%= Lookups %>
+			</div>
+			<div class="cell">
+				Mallocs: <%= Mallocs %>
+			</div>
+			<div class="cell">
+				Frees: <%= Frees %>
+			</div>
+		</div>
+
+		<div class="group">
+			<h3>Heap</h3>
+			// Main allocation heap statistics.
+			<div class="cell">
+				Allocated: <%= HeapAlloc %>
+			</div>
+			<div class="cell">
+				System: <%= HeapSys %>
+			</div>
+			<div class="cell">
+				Idle: <%= HeapIdle %>
+			</div>
+			<div class="cell">
+				In use: <%= HeapInuse %>
+			</div>
+			<div class="cell">
+				Released: <%= HeapReleased %>
+			</div>
+			<div class="cell">
+				Objects: <%= HeapObjects %>
+			</div>
+		</div>
+
+		<div class="group">
+			<h3>Low-level allocator statistics</h3>
+			<!-- Low-level fixed-size structure allocator statistics.-->
+			<!--	Inuse is bytes used now.-->
+			<!--	Sys is bytes obtained from system.-->
+			<div class="cell">
+				<h4>Stack</h4>
+				<div class="subcell">
+					In use: <%= StackInuse %> 
+				</div>
+				<div class="subcell">
+					Sys: <%= StackSys %>
+				</div>
+			</div>
+			<div class="cell">
+				<h4>MSpan</h4>
+				<div class="subcell">
+					In use: <%= MSpanInuse %>
+				</div>
+				<div class="subcell">
+					Sys: <%= MSpanSys %>
+				</div>
+			</div>
+			<div class="cell">
+				<h4>MCache</h4>
+				<div class="subcell">
+					In use: <%= MCacheInuse %>
+				</div>
+				<div class="subcell">
+					Sys: <%= MCacheSys %>
+				</div>
+			</div>
+			<div class="cell">
+				<h4>BuckHash (sys)</h4>
+				<%= BuckHashSys %>
+			</div>
+			<div class="cell">
+				GCSys: <%= GCSys %>
+			</div>
+			<div class="cell">
+				Other: <%= OtherSys %>
+			</div>
+		</div>
+
+		<div class="group">
+			<h3>Garbage collector</h2>
+			Next heap alloc: <%= NextGC %>
+			<div class="cell">
+				Last: <%= LastGC %>
+			</div>
+			<div class="cell">
+				PauseTotalNs: <%= PauseTotalNs %>
+			</div>
+			<div class="cell">
+				NumGC: <%= NumGC %>
+			</div>
+			<div class="cell">
+				EnableGC: <%= EnableGC %>
+			</div>
+			<div class="cell">
+				DebugGC: <%= DebugGC %>
+			</div>
+		</div>
+
 		</script>
 		<div id="ms-viewer"></div>
 
 		<script src="scripts/underscore-min.js"></script>
 		<script>
-			var ws = new WebSocket("ws://{{.ListenAddr}}/memstats-feed")
+			var ws = new WebSocket("ws://" + window.location.host + "/memstats-feed")
 			var tpl = _.template(document.getElementById("ms-viewer-template").innerHTML)
 
 			ws.onopen = function (event) {
 				console.log("MEMSTAT: Connected.");
 				ws.onmessage = function (evt) {
 					document.getElementById("ms-viewer").innerHTML = tpl(JSON.parse(evt.data));
+					console.log(JSON.parse(evt.data));
 				}
 			}
 

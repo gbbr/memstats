@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html/template"
 	"log"
+	"net"
 	"net/http"
 	_ "net/http/pprof"
 	"runtime"
@@ -25,17 +26,21 @@ type config struct {
 func Serve(addr string) {
 	var m memStats
 
-	m.opts.ListenAddr = "localhost:8080"
 	m.opts.Seconds = 2 * time.Second
+
+	ln, err := net.Listen("tcp", addr)
+	if err != nil {
+		log.Fatalf("memstat: %s", err)
+	}
+	m.opts.ListenAddr = ln.Addr().String()
 
 	mux := http.NewServeMux()
 	mux.Handle("/memstats-feed", websocket.Handler(m.serveStats))
 	mux.Handle("/", m)
 	mux.Handle("/scripts/", http.FileServer(http.Dir("web")))
 
-	err := http.ListenAndServe(m.opts.ListenAddr, mux)
-	if err != nil {
-		log.Fatalf("error starting MemStats server: %s", err)
+	if err = http.Serve(ln, mux); err != nil {
+		log.Fatalf("memstat: %s", err)
 	}
 }
 
@@ -45,9 +50,7 @@ func (m memStats) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		fmt.Fprintf(w, "Error parsing template: %s", err)
 		return
 	}
-
-	err = t.Execute(w, m.opts)
-	if err != nil {
+	if err := t.Execute(w, m.opts); err != nil {
 		fmt.Fprintf(w, "Error parsing template: %s", err)
 	}
 }
@@ -62,5 +65,5 @@ func (m memStats) serveStats(ws *websocket.Conn) {
 }
 
 func main() {
-	Serve(":8080")
+	Serve("127.0.0.1:8080")
 }
