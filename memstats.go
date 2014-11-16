@@ -20,10 +20,10 @@ type server struct {
 func Serve(opts ...func(*server)) {
 	var s server
 	defaults(&s)
-
 	for _, fn := range opts {
 		fn(&s)
 	}
+
 	ln, err := net.Listen("tcp", s.ListenAddr)
 	if err != nil {
 		log.Fatalf("memstat: %s", err)
