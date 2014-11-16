@@ -13,13 +13,17 @@ import (
 )
 
 type server struct {
-	ListenAddr string
-	Tick       time.Duration
+	ListenAddr      string
+	Tick            time.Duration
+	MemRecordSize   int
+	BlockRecordSize int
 }
 
 func defaults(s *server) {
 	s.ListenAddr = ":6061"
 	s.Tick = 2 * time.Second
+	s.MemRecordSize = 50
+	s.BlockRecordSize = 50
 }
 
 func Serve(opts ...func(*server)) {
@@ -39,6 +43,7 @@ func Serve(opts ...func(*server)) {
 	mux := http.NewServeMux()
 	mux.Handle("/", s)
 	mux.Handle("/memstats-feed", websocket.Handler(s.ServeMemStats))
+	mux.Handle("/memprofile-feed", websocket.Handler(s.ServeMemProfile))
 	if err = http.Serve(ln, mux); err != nil {
 		log.Fatalf("memstat: %s", err)
 	}
@@ -62,6 +67,55 @@ func (s server) ServeMemStats(ws *websocket.Conn) {
 		err := websocket.JSON.Send(ws, buf)
 		if err != nil {
 			break
+		}
+		<-time.After(s.Tick)
+	}
+	ws.Close()
+}
+
+type memProfile struct {
+	AllocBytes, FreeBytes int64
+	AllocObjs, FreeObjs   int64
+	Callstack             []string
+}
+
+func resolveFuncs(stk []uintptr) []string {
+	fnpc := make([]string, len(stk))
+	var n int
+	for i, pc := range stk {
+		fn := runtime.FuncForPC(pc)
+		if fn == nil || pc == 0 {
+			break
+		}
+		fnpc[i] = fn.Name()
+		n++
+	}
+	return fnpc[:n]
+}
+
+func (s server) payloadMem(p []runtime.MemProfileRecord) []memProfile {
+	prof := make([]memProfile, len(p))
+	for i, e := range p {
+		prof[i] = memProfile{
+			AllocBytes: e.AllocBytes,
+			FreeBytes:  e.FreeBytes,
+			AllocObjs:  e.AllocObjects,
+			FreeObjs:   e.FreeObjects,
+			Callstack:  resolveFuncs(e.Stack()),
+		}
+	}
+	return prof
+}
+
+func (s server) ServeMemProfile(ws *websocket.Conn) {
+	prof := make([]runtime.MemProfileRecord, s.MemRecordSize)
+	for {
+		n, ok := runtime.MemProfile(prof, false)
+		if ok {
+			err := websocket.JSON.Send(ws, s.payloadMem(prof[:n]))
+			if err != nil {
+				break
+			}
 		}
 		<-time.After(s.Tick)
 	}
