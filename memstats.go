@@ -17,6 +17,11 @@ type server struct {
 	Tick       time.Duration
 }
 
+func defaults(s *server) {
+	s.ListenAddr = ":6061"
+	s.Tick = 2 * time.Second
+}
+
 func Serve(opts ...func(*server)) {
 	var s server
 	defaults(&s)
@@ -61,9 +66,4 @@ func (s server) ServeMemStats(ws *websocket.Conn) {
 		<-time.After(s.Tick)
 	}
 	ws.Close()
-}
-
-func defaults(s *server) {
-	s.ListenAddr = ":6061"
-	s.Tick = 2 * time.Second
 }
