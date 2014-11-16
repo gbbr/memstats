@@ -53,17 +53,14 @@ func (m server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 }
 
 func (m server) serveStats(ws *websocket.Conn) {
-	var buf bytes.Buffer
 	payload := struct {
-		Stats   runtime.MemStats
-		CPUProf string
+		Stats runtime.MemStats
 	}{}
-
+	var buf bytes.Buffer
 	pprof.StartCPUProfile(&buf)
 	for {
 		buf.Reset()
 		runtime.ReadMemStats(&payload.Stats)
-
 		websocket.JSON.Send(ws, payload)
 		<-time.After(m.Tick)
 	}
