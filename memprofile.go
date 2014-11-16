@@ -6,6 +6,7 @@ import "runtime"
 type memProfile struct {
 	AllocBytes, FreeBytes int64
 	AllocObjs, FreeObjs   int64
+	InUseBytes, InUseObjs int64
 	Callstack             []string
 }
 
@@ -34,9 +35,11 @@ func (m memProfile) payload(size int) (data []memProfile, ok bool) {
 	for i, e := range record {
 		prof[i] = memProfile{
 			AllocBytes: e.AllocBytes,
-			FreeBytes:  e.FreeBytes,
 			AllocObjs:  e.AllocObjects,
+			FreeBytes:  e.FreeBytes,
 			FreeObjs:   e.FreeObjects,
+			InUseBytes: e.InUseBytes(),
+			InUseObjs:  e.InUseObjects(),
 			Callstack:  resolveFuncs(e.Stack()),
 		}
 	}
