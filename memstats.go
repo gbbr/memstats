@@ -1,4 +1,4 @@
-package main
+package memstats
 
 import (
 	"bytes"
@@ -6,8 +6,6 @@ import (
 	"log"
 	"net"
 	"net/http"
-	"os"
-	"os/signal"
 	"runtime"
 	"runtime/pprof"
 	"time"
@@ -74,12 +72,4 @@ func (s server) ServeSocket(ws *websocket.Conn) {
 func defaults(s *server) {
 	s.ListenAddr = ":6061"
 	s.Tick = 2 * time.Second
-}
-
-func main() {
-	go Serve()
-
-	sig := make(chan os.Signal, 1)
-	signal.Notify(sig, os.Interrupt)
-	<-sig
 }
