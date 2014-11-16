@@ -7,6 +7,8 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"os"
+	"os/signal"
 	"runtime"
 	"runtime/pprof"
 	"time"
@@ -87,5 +89,9 @@ func Duration(d time.Duration) func(*server) {
 }
 
 func main() {
-	Serve()
+	go Serve()
+
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, os.Interrupt)
+	<-sig
 }
