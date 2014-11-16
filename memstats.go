@@ -10,7 +10,7 @@ import (
 	"runtime/pprof"
 	"time"
 
-	"github.com/gbbr/memstats/internal/view"
+	"github.com/gbbr/memstats/internal/web"
 	"golang.org/x/net/websocket"
 )
 
@@ -42,7 +42,7 @@ func Serve(opts ...func(*server)) {
 }
 
 func (s server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	t, err := view.Render()
+	t, err := web.Render()
 	if err != nil {
 		fmt.Fprintf(w, "Error parsing template: %s", err)
 		return

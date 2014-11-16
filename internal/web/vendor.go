@@ -1,4 +1,4 @@
-package view
+package web
 
 var underscoreJS = `
 {{define "underscoreJS"}}
