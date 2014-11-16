@@ -24,6 +24,7 @@ func defaults(s *server) {
 	s.MemRecordSize = 50
 }
 
+// Serve starts a memory monitoring server. By default it listens on :6061
 func Serve(opts ...func(*server)) {
 	var s server
 	defaults(&s)
@@ -47,6 +48,7 @@ func Serve(opts ...func(*server)) {
 	}
 }
 
+// ServeHTTP serves the front-end HTML/JS viewer
 func (s server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	t, err := web.Template()
 	if err != nil {
@@ -58,6 +60,8 @@ func (s server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
+// ServeMemStats serves the connected socket with a snapshot of
+// runtime.MemStats
 func (s server) ServeMemStats(ws *websocket.Conn) {
 	var buf runtime.MemStats
 	for {
@@ -71,6 +75,7 @@ func (s server) ServeMemStats(ws *websocket.Conn) {
 	ws.Close()
 }
 
+// ServeMemProfile serves the socket with memory profile blocks
 func (s server) ServeMemProfile(ws *websocket.Conn) {
 	var mp memProfile
 	for {
