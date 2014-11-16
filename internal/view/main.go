@@ -6,7 +6,7 @@ import (
 )
 
 func Render() (*template.Template, error) {
-	return template.New("mainJS").Parse(strings.Join([]string{
+	return template.New("name").Parse(strings.Join([]string{
 		underscoreJS,
 		mainJS,
 		stylesheet,
