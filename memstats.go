@@ -21,8 +21,8 @@ type server struct {
 
 func Serve(opts ...func(*server)) {
 	var m server
-
 	defaults(&m)
+
 	for _, fn := range opts {
 		fn(&m)
 	}
@@ -36,7 +36,6 @@ func Serve(opts ...func(*server)) {
 	mux.Handle("/memstats-feed", websocket.Handler(m.serveStats))
 	mux.Handle("/", m)
 	mux.Handle("/scripts/", http.FileServer(http.Dir("web")))
-
 	if err = http.Serve(ln, mux); err != nil {
 		log.Fatalf("memstat: %s", err)
 	}
@@ -63,9 +62,6 @@ func (m server) serveStats(ws *websocket.Conn) {
 	pprof.StartCPUProfile(&buf)
 	for {
 		buf.Reset()
-		pprof.Lookup("goroutine").WriteTo(&buf, 0)
-		payload.CPUProf = buf.String()
-
 		runtime.ReadMemStats(&payload.Stats)
 
 		websocket.JSON.Send(ws, payload)
