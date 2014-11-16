@@ -71,26 +71,8 @@ func (s server) ServeSocket(ws *websocket.Conn) {
 	pprof.StopCPUProfile()
 }
 
-func defaults(s *server) {
-	s.ListenAddr = ":6061"
-	s.Tick = 2 * time.Second
-}
-
-func Addr(laddr string) func(*server) {
-	return func(s *server) {
-		s.ListenAddr = laddr
-	}
-}
-
-func Duration(d time.Duration) func(*server) {
-	return func(s *server) {
-		s.Tick = d
-	}
-}
-
 func main() {
 	go Serve()
-
 	sig := make(chan os.Signal, 1)
 	signal.Notify(sig, os.Interrupt)
 	<-sig
