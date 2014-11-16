@@ -6,7 +6,6 @@ import (
 	"net"
 	"net/http"
 	"runtime"
-	"runtime/pprof"
 	"time"
 
 	"github.com/gbbr/memstats/internal/web"
@@ -62,7 +61,6 @@ func (s server) ServeMemStats(ws *websocket.Conn) {
 		}
 		<-time.After(s.Tick)
 	}
-	pprof.StopCPUProfile()
 	ws.Close()
 }
 
