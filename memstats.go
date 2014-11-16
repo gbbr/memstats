@@ -42,7 +42,7 @@ func Serve(opts ...func(*server)) {
 }
 
 func (s server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	t, err := web.Render()
+	t, err := web.Template()
 	if err != nil {
 		fmt.Fprintf(w, "Error parsing template: %s", err)
 		return

@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func Render() (*template.Template, error) {
+func Template() (*template.Template, error) {
 	return template.New("name").Parse(strings.Join([]string{
 		underscoreJS,
 		mainJS,
