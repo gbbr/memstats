@@ -1,5 +1,19 @@
 package view
 
+import (
+	"html/template"
+	"strings"
+)
+
+func Render() (*template.Template, error) {
+	return template.New("mainJS").Parse(strings.Join([]string{
+		underscoreJS,
+		mainJS,
+		stylesheet,
+		rootView,
+	}, ""))
+}
+
 var rootView = `
 {{define "main"}}
 <!DOCTYPE html>

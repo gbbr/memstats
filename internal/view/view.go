@@ -1,17 +1,5 @@
 package view
 
-import "go/src/text/template"
-import "strings"
-
-func Render() (*template.Template, error) {
-	return template.New("mainJS").Parse(strings.Join([]string{
-		underscoreJS,
-		mainJS,
-		stylesheet,
-		rootView,
-	}, ""))
-}
-
 var mainJS = `
 {{define "mainJS"}}
 	var ws = new WebSocket("ws://" + window.location.host + "/memstats-feed")
