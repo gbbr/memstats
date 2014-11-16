@@ -67,3 +67,9 @@ func (s server) ServeMemStats(ws *websocket.Conn) {
 	}
 	ws.Close()
 }
+
+func ListenAddr(addr string) func(*server) {
+	return func(s *server) {
+		s.ListenAddr = addr
+	}
+}
