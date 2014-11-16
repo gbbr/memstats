@@ -1,7 +1,6 @@
 package memstats
 
 import (
-	"bytes"
 	"fmt"
 	"log"
 	"net"
@@ -55,14 +54,9 @@ func (s server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 func (s server) ServeSocket(ws *websocket.Conn) {
 	payload := struct {
 		Stats runtime.MemStats
-		CPU   string
 	}{}
-	var buf bytes.Buffer
-	pprof.StartCPUProfile(&buf)
 	for {
 		runtime.ReadMemStats(&payload.Stats)
-		payload.CPU = buf.String()
-		buf.Reset()
 		websocket.JSON.Send(ws, payload)
 		<-time.After(s.Tick)
 	}
