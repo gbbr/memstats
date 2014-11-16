@@ -71,46 +71,11 @@ func (s server) ServeMemStats(ws *websocket.Conn) {
 	ws.Close()
 }
 
-type memProfile struct {
-	AllocBytes, FreeBytes int64
-	AllocObjs, FreeObjs   int64
-	Callstack             []string
-}
-
-func resolveFuncs(stk []uintptr) []string {
-	fnpc := make([]string, len(stk))
-	var n int
-	for i, pc := range stk {
-		fn := runtime.FuncForPC(pc)
-		if fn == nil || pc == 0 {
-			break
-		}
-		fnpc[i] = fn.Name()
-		n++
-	}
-	return fnpc[:n]
-}
-
-func payloadMem(p []runtime.MemProfileRecord) []memProfile {
-	prof := make([]memProfile, len(p))
-	for i, e := range p {
-		prof[i] = memProfile{
-			AllocBytes: e.AllocBytes,
-			FreeBytes:  e.FreeBytes,
-			AllocObjs:  e.AllocObjects,
-			FreeObjs:   e.FreeObjects,
-			Callstack:  resolveFuncs(e.Stack()),
-		}
-	}
-	return prof
-}
-
 func (s server) ServeMemProfile(ws *websocket.Conn) {
-	prof := make([]runtime.MemProfileRecord, s.MemRecordSize)
+	var mp memProfile
 	for {
-		n, ok := runtime.MemProfile(prof, false)
-		if ok {
-			err := websocket.JSON.Send(ws, payloadMem(prof[:n]))
+		if data, ok := mp.payload(s.MemRecordSize); ok {
+			err := websocket.JSON.Send(ws, data)
 			if err != nil {
 				break
 			}
