@@ -6,33 +6,30 @@ import (
 	"log"
 	"net"
 	"net/http"
-	_ "net/http/pprof"
 	"runtime"
 	"time"
 
 	"golang.org/x/net/websocket"
 )
 
-type memStats struct {
-	stats runtime.MemStats
-	opts  config
-}
-
-type config struct {
+type server struct {
 	ListenAddr string
-	Seconds    time.Duration
+	Tick       time.Duration
 }
 
-func Serve(addr string) {
-	var m memStats
+func Serve(opts ...func(*server)) {
+	var m server
 
-	m.opts.Seconds = 2 * time.Second
+	defaults(&m)
+	for _, fn := range opts {
+		fn(&m)
+	}
 
-	ln, err := net.Listen("tcp", addr)
+	ln, err := net.Listen("tcp", m.ListenAddr)
 	if err != nil {
 		log.Fatalf("memstat: %s", err)
 	}
-	m.opts.ListenAddr = ln.Addr().String()
+	m.ListenAddr = ln.Addr().String()
 
 	mux := http.NewServeMux()
 	mux.Handle("/memstats-feed", websocket.Handler(m.serveStats))
@@ -44,26 +41,42 @@ func Serve(addr string) {
 	}
 }
 
-func (m memStats) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+func (m server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	t, err := template.ParseFiles("web/viewer.html")
 	if err != nil {
 		fmt.Fprintf(w, "Error parsing template: %s", err)
 		return
 	}
-	if err := t.Execute(w, m.opts); err != nil {
+	if err := t.Execute(w, m); err != nil {
 		fmt.Fprintf(w, "Error parsing template: %s", err)
 	}
 }
 
-func (m memStats) serveStats(ws *websocket.Conn) {
+func (m server) serveStats(ws *websocket.Conn) {
+	var stats runtime.MemStats
 	for {
-		runtime.ReadMemStats(&m.stats)
-		websocket.JSON.Send(ws, m.stats)
+		runtime.ReadMemStats(&stats)
+		websocket.JSON.Send(ws, stats)
+		<-time.After(m.Tick)
+	}
+}
 
-		<-time.After(m.opts.Seconds)
+func defaults(s *server) {
+	s.ListenAddr = ":6061"
+	s.Tick = 2 * time.Second
+}
+func Addr(laddr string) func(*server) {
+	return func(s *server) {
+		s.ListenAddr = laddr
+	}
+}
+
+func Duration(d time.Duration) func(*server) {
+	return func(s *server) {
+		s.Tick = d
 	}
 }
 
 func main() {
-	Serve("127.0.0.1:8080")
+	Serve()
 }
