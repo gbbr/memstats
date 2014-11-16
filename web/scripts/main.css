@@ -1,0 +1,14 @@
+div.group {
+	width: 250px;
+	padding: 20px;
+	float: left;
+	border: 1px solid #dfdfdf;
+}
+
+div.group div.cell {
+	margin: 5px 0 0 0;
+}
+
+div.group h4 {
+	margin: 5px 0 0 0;
+}

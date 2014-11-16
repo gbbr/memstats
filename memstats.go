@@ -33,9 +33,9 @@ func Serve(opts ...func(*server)) {
 	s.ListenAddr = ln.Addr().String()
 
 	mux := http.NewServeMux()
-	mux.Handle("/memstats-feed", websocket.Handler(s.ServeSocket))
 	mux.Handle("/", s)
 	mux.Handle("/scripts/", http.FileServer(http.Dir("web")))
+	mux.Handle("/memstats-feed", websocket.Handler(s.ServeSocket))
 	if err = http.Serve(ln, mux); err != nil {
 		log.Fatalf("memstat: %s", err)
 	}
@@ -55,12 +55,14 @@ func (s server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 func (s server) ServeSocket(ws *websocket.Conn) {
 	payload := struct {
 		Stats runtime.MemStats
+		CPU   string
 	}{}
 	var buf bytes.Buffer
 	pprof.StartCPUProfile(&buf)
 	for {
-		buf.Reset()
 		runtime.ReadMemStats(&payload.Stats)
+		payload.CPU = buf.String()
+		buf.Reset()
 		websocket.JSON.Send(ws, payload)
 		<-time.After(s.Tick)
 	}
@@ -71,6 +73,7 @@ func defaults(s *server) {
 	s.ListenAddr = ":6061"
 	s.Tick = 2 * time.Second
 }
+
 func Addr(laddr string) func(*server) {
 	return func(s *server) {
 		s.ListenAddr = laddr
