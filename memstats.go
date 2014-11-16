@@ -13,17 +13,15 @@ import (
 )
 
 type server struct {
-	ListenAddr      string
-	Tick            time.Duration
-	MemRecordSize   int
-	BlockRecordSize int
+	ListenAddr    string
+	Tick          time.Duration
+	MemRecordSize int
 }
 
 func defaults(s *server) {
 	s.ListenAddr = ":6061"
 	s.Tick = 2 * time.Second
 	s.MemRecordSize = 50
-	s.BlockRecordSize = 50
 }
 
 func Serve(opts ...func(*server)) {
