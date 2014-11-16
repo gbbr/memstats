@@ -9,46 +9,46 @@
 		<div class="group">
 			<h3>General</h3>
 			<div class="cell">
-				Allocated + In use: <%= Alloc %>
+				Allocated and using: <%= Stats.Alloc %>
 			</div>
 			<div class="cell">
-				Total + Freed: <%= TotalAlloc %> 
+				Total + Freed: <%= Stats.TotalAlloc %> 
 			</div>
 			<div class="cell">
-				System: <%= Sys %> 
+				System: <%= Stats.Sys %> 
 			</div>
 			<br />
 			<div class="cell">
-				Lookups: <%= Lookups %>
+				Lookups: <%= Stats.Lookups %>
 			</div>
 			<div class="cell">
-				Mallocs: <%= Mallocs %>
+				Frees: <%= Stats.Frees %>
 			</div>
 			<div class="cell">
-				Frees: <%= Frees %>
+				mallocs: <%= Stats.Mallocs %>
 			</div>
 		</div>
 
 		<div class="group">
 			<h3>Heap</h3>
 			<div class="cell">
-				Allocated + In use: <%= HeapAlloc %> 
+				Allocated and using: <%= Stats.HeapAlloc %> 
 			</div>
 			<div class="cell">
-				System: <%= HeapSys %> 
+				System: <%= Stats.HeapSys %> 
 			</div>
 			<div class="cell">
-				Idle: <%= HeapIdle %> 
+				Idle: <%= Stats.HeapIdle %> 
 			</div>
 			<div class="cell">
-				In use: <%= HeapInuse %> 
+				In use: <%= Stats.HeapInuse %> 
 			</div>
 			<div class="cell">
-				Released: <%= HeapReleased %> 
+				Released: <%= Stats.HeapReleased %> 
 			</div>
 			<br />
 			<div class="cell">
-				Objects: <%= HeapObjects %>
+				Objects: <%= Stats.HeapObjects %>
 			</div>
 		</div>
 
@@ -59,49 +59,49 @@
 			<!--	Sys is bytes obtained from system.-->
 			<div class="cell">
 				Stack:
-				<%= StackInuse %> of <%= StackSys %> 
+				<%= Stats.StackInuse %> of <%= Stats.StackSys %> 
 			</div>
 			<div class="cell">
 				MSpan:
-				<%= MSpanInuse %> of <%= MSpanSys %> 
+				<%= Stats.MSpanInuse %> of <%= Stats.MSpanSys %> 
 			</div>
 			<div class="cell">
-				MCache: <%= MCacheInuse %> of <%= MCacheSys %> 
+				MCache: <%= Stats.MCacheInuse %> of <%= Stats.MCacheSys %> 
 			</div>
 			<br />
 			<div class="cell">
-				BuckHashSys: <%= BuckHashSys %>
+				BuckHashSys: <%= Stats.BuckHashSys %>
 			</div>
 			<div class="cell">
-				GCSys: <%= GCSys %>
+				GCSys: <%= Stats.GCSys %>
 			</div>
 			<div class="cell">
-				Other: <%= OtherSys %>
+				Other: <%= Stats.OtherSys %>
 			</div>
 		</div>
 
 		<div class="group">
 			<h3>Garbage collector</h2>
 			<div class="cell">
-				Next run: <%= NextGC %>
+				Next run: <%= Stats.NextGC %>
 			</div>
 			<div class="cell">
-				Last run: <%= LastGC %>
+				Last run: <%= Stats.LastGC %>
 			</div>
 			<div class="cell">
-				PauseTotalNs: <%= PauseTotalNs %>
+				Pause: <%= Stats.PauseTotalNs %>
 			</div>
 			<div class="cell">
-				NumGC: <%= NumGC %>
+				Runs: <%= Stats.NumGC %>
 			</div>
 			<br />
 			<div class="cell">
-				Enabled: <%= EnableGC %>
+				Enabled: <%= Stats.EnableGC %>
 			</div>
 			<div class="cell">
-				Debug mode: <%= DebugGC %>
+				Debug: <%= Stats.DebugGC %>
 			</div>
-		</divlen(d.change)-1:len(d.change)>
+		</div>
 
 		</script>
 		<div id="ms-viewer"></div>

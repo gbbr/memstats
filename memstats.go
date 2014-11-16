@@ -1,12 +1,14 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"html/template"
 	"log"
 	"net"
 	"net/http"
 	"runtime"
+	"runtime/pprof"
 	"time"
 
 	"golang.org/x/net/websocket"
@@ -24,7 +26,6 @@ func Serve(opts ...func(*server)) {
 	for _, fn := range opts {
 		fn(&m)
 	}
-
 	ln, err := net.Listen("tcp", m.ListenAddr)
 	if err != nil {
 		log.Fatalf("memstat: %s", err)
@@ -53,12 +54,24 @@ func (m server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 }
 
 func (m server) serveStats(ws *websocket.Conn) {
-	var stats runtime.MemStats
+	var buf bytes.Buffer
+	payload := struct {
+		Stats   runtime.MemStats
+		CPUProf string
+	}{}
+
+	pprof.StartCPUProfile(&buf)
 	for {
-		runtime.ReadMemStats(&stats)
-		websocket.JSON.Send(ws, stats)
+		buf.Reset()
+		pprof.Lookup("goroutine").WriteTo(&buf, 0)
+		payload.CPUProf = buf.String()
+
+		runtime.ReadMemStats(&payload.Stats)
+
+		websocket.JSON.Send(ws, payload)
 		<-time.After(m.Tick)
 	}
+	pprof.StopCPUProfile()
 }
 
 func defaults(s *server) {
