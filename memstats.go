@@ -20,39 +20,39 @@ type server struct {
 }
 
 func Serve(opts ...func(*server)) {
-	var m server
-	defaults(&m)
+	var s server
+	defaults(&s)
 
 	for _, fn := range opts {
-		fn(&m)
+		fn(&s)
 	}
-	ln, err := net.Listen("tcp", m.ListenAddr)
+	ln, err := net.Listen("tcp", s.ListenAddr)
 	if err != nil {
 		log.Fatalf("memstat: %s", err)
 	}
-	m.ListenAddr = ln.Addr().String()
+	s.ListenAddr = ln.Addr().String()
 
 	mux := http.NewServeMux()
-	mux.Handle("/memstats-feed", websocket.Handler(m.serveStats))
-	mux.Handle("/", m)
+	mux.Handle("/memstats-feed", websocket.Handler(s.ServeSocket))
+	mux.Handle("/", s)
 	mux.Handle("/scripts/", http.FileServer(http.Dir("web")))
 	if err = http.Serve(ln, mux); err != nil {
 		log.Fatalf("memstat: %s", err)
 	}
 }
 
-func (m server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+func (s server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	t, err := template.ParseFiles("web/viewer.html")
 	if err != nil {
 		fmt.Fprintf(w, "Error parsing template: %s", err)
 		return
 	}
-	if err := t.Execute(w, m); err != nil {
+	if err := t.Execute(w, s); err != nil {
 		fmt.Fprintf(w, "Error parsing template: %s", err)
 	}
 }
 
-func (m server) serveStats(ws *websocket.Conn) {
+func (s server) ServeSocket(ws *websocket.Conn) {
 	payload := struct {
 		Stats runtime.MemStats
 	}{}
@@ -62,7 +62,7 @@ func (m server) serveStats(ws *websocket.Conn) {
 		buf.Reset()
 		runtime.ReadMemStats(&payload.Stats)
 		websocket.JSON.Send(ws, payload)
-		<-time.After(m.Tick)
+		<-time.After(s.Tick)
 	}
 	pprof.StopCPUProfile()
 }
