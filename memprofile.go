@@ -25,7 +25,7 @@ func resolveFuncs(stk []uintptr) []string {
 	return fnpc[:n]
 }
 
-func (m memProfile) payload(size int) (data []memProfile, ok bool) {
+func runMemProfile(size int) (data []memProfile, ok bool) {
 	record := make([]runtime.MemProfileRecord, size)
 	n, ok := runtime.MemProfile(record, false)
 	if !ok {

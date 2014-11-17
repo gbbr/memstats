@@ -63,6 +63,7 @@ func (s server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 // ServeMemStats serves the connected socket with a snapshot of
 // runtime.MemStats
 func (s server) ServeMemStats(ws *websocket.Conn) {
+	defer ws.Close()
 	var buf runtime.MemStats
 	for {
 		runtime.ReadMemStats(&buf)
@@ -72,14 +73,13 @@ func (s server) ServeMemStats(ws *websocket.Conn) {
 		}
 		<-time.After(s.Tick)
 	}
-	ws.Close()
 }
 
 // ServeMemProfile serves the socket with memory profile blocks
 func (s server) ServeMemProfile(ws *websocket.Conn) {
-	var mp memProfile
+	defer ws.Close()
 	for {
-		if data, ok := mp.payload(s.MemRecordSize); ok {
+		if data, ok := runMemProfile(s.MemRecordSize); ok {
 			err := websocket.JSON.Send(ws, data)
 			if err != nil {
 				break
@@ -87,7 +87,6 @@ func (s server) ServeMemProfile(ws *websocket.Conn) {
 		}
 		<-time.After(s.Tick)
 	}
-	ws.Close()
 }
 
 func ListenAddr(addr string) func(*server) {
