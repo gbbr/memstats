@@ -113,16 +113,15 @@ func memProfile(size int) (data []memProfileRecord, ok bool) {
 // humanizeStack resolves a stracktrace to an array of function names
 func humanizeStack(stk []uintptr) []string {
 	fnpc := make([]string, len(stk))
-	var n int
-	for i, pc := range stk {
-		fn := runtime.FuncForPC(pc)
-		if fn == nil || pc == 0 {
-			break
+	var i int
+	for i = 0; i < len(stk) && stk[i] != 0; i++ {
+		fn := runtime.FuncForPC(stk[i])
+		if fn == nil {
+			continue
 		}
 		fnpc[i] = fn.Name()
-		n++
 	}
-	return fnpc[:n]
+	return fnpc[:i]
 }
 
 // ListenAddr sets the address that the server will listen on for HTTP
