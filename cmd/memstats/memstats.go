@@ -23,7 +23,7 @@ func main() {
 	flag.Parse()
 	hst, _, err := net.SplitHostPort(*saddr)
 	if len(hst) == 0 || err != nil {
-		log.Fatal("sockaddr must be host[:port]. ERR: %s", err)
+		log.Fatal("sockaddr must be host[:port]", err)
 	}
 	http.HandleFunc("/", serveHTTP)
 	err = http.ListenAndServe(*laddr, nil)
