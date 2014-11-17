@@ -15,12 +15,6 @@ import (
 	"golang.org/x/net/websocket"
 )
 
-type server struct {
-	ListenAddr    string
-	Tick          time.Duration
-	MemRecordSize int
-}
-
 func defaults(s *server) {
 	s.ListenAddr = ":6061"
 	s.Tick = 2 * time.Second
@@ -48,6 +42,12 @@ func Serve(opts ...func(*server)) {
 	if err = http.Serve(ln, mux); err != nil {
 		log.Fatalf("memstat: %s", err)
 	}
+}
+
+type server struct {
+	ListenAddr    string
+	Tick          time.Duration
+	MemRecordSize int
 }
 
 // ServeHTTP serves the front-end HTML/JS viewer
