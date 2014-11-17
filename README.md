@@ -29,7 +29,7 @@ func main() {
 }
 ```
 
-Run `go run main.go` to start the program. 
+Run `go run main.go` to start the program.  
 Run `memstats` to start the web viewer. 
 
 Open http://localhost:6061 in browser to view live memory statistics.
