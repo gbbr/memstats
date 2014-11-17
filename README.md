@@ -33,5 +33,4 @@ func main() {
 ```
 
 Run `go run main.go` to start the program.  
-Run `memstats` to start the web viewer.  
-Open [http://localhost:8080](http://localhost:8080) in browser to view live memory statistics.   
+Run `memstats` to start the web viewer on [http://localhost:8080](http://localhost:8080).
