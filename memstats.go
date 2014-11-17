@@ -73,11 +73,11 @@ func (s server) ServeMemStats(ws *websocket.Conn) {
 	defer ws.Close()
 	payload := struct {
 		runtime.MemStats
-		Profile []memProfile
+		Profile []memProfileRecord
 	}{}
 	for {
-		if data, ok := readMemProfile(s.MemRecordSize); ok {
-			payload.Profile = data
+		if prof, ok := memProfile(s.MemRecordSize); ok {
+			payload.Profile = prof
 		}
 		runtime.ReadMemStats(&payload.MemStats)
 		err := websocket.JSON.Send(ws, payload)
@@ -88,23 +88,24 @@ func (s server) ServeMemStats(ws *websocket.Conn) {
 	}
 }
 
-// memProfile holds information about a memory profile entry
-type memProfile struct {
+// memProfileRecord holds information about a memory profile entry
+type memProfileRecord struct {
 	AllocBytes, FreeBytes int64
 	AllocObjs, FreeObjs   int64
 	InUseBytes, InUseObjs int64
 	Callstack             []string
 }
 
-func readMemProfile(size int) (data []memProfile, ok bool) {
+// memProfile returns a slice of memProfileRecord from the current memory profile.
+func memProfile(size int) (data []memProfileRecord, ok bool) {
 	record := make([]runtime.MemProfileRecord, size)
 	n, ok := runtime.MemProfile(record, false)
 	if !ok {
 		return nil, false
 	}
-	prof := make([]memProfile, len(record))
+	prof := make([]memProfileRecord, len(record))
 	for i, e := range record {
-		prof[i] = memProfile{
+		prof[i] = memProfileRecord{
 			AllocBytes: e.AllocBytes,
 			AllocObjs:  e.AllocObjects,
 			FreeBytes:  e.FreeBytes,
