@@ -25,14 +25,14 @@ func memProfile(size int) (data []memProfileRecord, ok bool) {
 			MemProfileRecord: e,
 			InUseBytes:       e.InUseBytes(),
 			InUseObjs:        e.InUseObjects(),
-			Callstack:        resolveFuncs(e.Stack()),
+			Callstack:        humanizeStack(e.Stack()),
 		}
 	}
 	return prof[:n], true
 }
 
-// resolveFuncs resolves a stracktrace to an array of function names
-func resolveFuncs(stk []uintptr) []string {
+// humanizeStack resolves a stracktrace to an array of function names
+func humanizeStack(stk []uintptr) []string {
 	fnpc := make([]string, len(stk))
 	var n int
 	for i, pc := range stk {
