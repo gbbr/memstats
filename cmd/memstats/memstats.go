@@ -13,7 +13,6 @@ var (
 	saddr = flag.String("sock", "localhost:6061", "Adress the WebSockets listen on.")
 )
 
-// serveHTTP serves the front-end HTML/JS viewer
 func serveHTTP(w http.ResponseWriter, req *http.Request) {
 	if err := tpl.ExecuteTemplate(w, "main", *saddr); err != nil {
 		fmt.Fprintf(w, "Error parsing template: %s", err)
