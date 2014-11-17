@@ -13,15 +13,23 @@ var mainJS = `
 			var memdata = JSON.parse(evt.data);
 			var humanized = _.clone(memdata);
 			
-			console.log(memdata);
 			[ // Convert byte values to readable form.
 				"Alloc", "TotalAlloc", "Sys", "HeapAlloc", "HeapSys", "HeapIdle",
 				"HeapInuse", "HeapReleased", "StackInuse", "StackSys", "MSpanInuse",
 				"MSpanSys", "MCacheInuse", "MCacheSys", "NextGC"
-
 			].forEach(function (key) {
 				humanized[key] = bytesToSize(memdata[key]);
 			}); 
+
+			// Humanize profile
+			if (Array.isArray(humanized.Profile)) {
+				humanized.Profile.forEach(function (record, index) {
+					["AllocBytes", "FreeBytes", "InUseBytes"].forEach(function (key) {
+						humanized.Profile[index][key] = bytesToSize(memdata.Profile[index][key]);
+					});
+				});
+			}
+			console.log(humanized.Profile);
 
 			document.getElementById("ms-viewer").innerHTML = tpl(humanized);
 		}
@@ -34,9 +42,9 @@ var mainJS = `
 
 	// Converts bytes to human-readable form with precision(3)
 	function bytesToSize(bytes) {
-		if(bytes == 0) return '0 Byte';
+		if(bytes == 0) return '0 byte';
 		var k = 1000, i = Math.floor(Math.log(bytes) / Math.log(k));
-		var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+		var sizes = ['bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 		return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i];
 	};
 {{end}}`
@@ -44,7 +52,7 @@ var mainJS = `
 var stylesheet = `
 {{define "stylesheet"}}
 	div.group {
-		width: 250px;
+		min-width: 250px;
 		padding: 20px;
 		float: left;
 		border: 1px solid #dfdfdf;
@@ -56,5 +64,9 @@ var stylesheet = `
 
 	div.group h4 {
 		margin: 5px 0 0 0;
+	}
+
+	#memprofile {
+		clear: left;
 	}
 {{end}}`

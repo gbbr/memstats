@@ -123,6 +123,27 @@ var rootView = `
 			</div>
 		</div>
 
+		<div id="memprofile">
+			<h2>Mem Profile Records</h2>
+			<% _.each(Profile, function(data) { %>
+				<div class="group">
+					<div class="cell">Allocated: <%= data.AllocBytes %></div>
+					<div class="cell">In use: <%= data.InUseBytes %></div>
+					<div class="cell">Free: <%= data.FreeBytes %></div>
+					<div class="cell">Objects: <%= data.AllocObjs %></div>
+					<div class="cell">Free objects: <%= data.FreeObjs %></div>
+					<div class="cell">In use objects: <%= data.InUseObjs %></div>
+					<br />
+					Items in callstack: <%= data.Callstack.length %>
+					<% _.each(data.Callstack, function(funcName) { %>
+						<div class="cell">
+							<%= funcName %>
+						</div>
+					<% }); %>
+				</div>
+			<% }); %>
+		</div>
+
 		</script>
 		<div id="ms-viewer"></div>
 
