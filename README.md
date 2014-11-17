@@ -7,7 +7,7 @@ go install github.com/gbbr/memstats/...
 
 ### Usage
 
-To monitoring in your application:  
+To monitor your application:  
 * Import the package and add the line `go memstats.Serve()` into your code. 
 * Run you server or application. Now, memory profiling information is available via websockets.  
 * Run the provided web server by executing `memstats` in the command line.  
