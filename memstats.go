@@ -118,13 +118,16 @@ func memProfile(size int) (data []memProfileRecord, ok bool) {
 	prof := make([]memProfileRecord, len(record))
 	for i, e := range record {
 		prof[i] = memProfileRecord{
+			// Bytes
 			AllocBytes: e.AllocBytes,
-			AllocObjs:  e.AllocObjects,
 			FreeBytes:  e.FreeBytes,
-			FreeObjs:   e.FreeObjects,
 			InUseBytes: e.InUseBytes(),
-			InUseObjs:  e.InUseObjects(),
-			Callstack:  resolveFuncs(e.Stack()),
+			// Objects
+			AllocObjs: e.AllocObjects,
+			FreeObjs:  e.FreeObjects,
+			InUseObjs: e.InUseObjects(),
+			// Stack
+			Callstack: resolveFuncs(e.Stack()),
 		}
 	}
 	return prof[:n], true
