@@ -74,11 +74,11 @@ func (s server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 // runtime.MemStats
 func (s server) ServeMemProfile(ws *websocket.Conn) {
 	defer ws.Close()
-	payload := struct {
+	var payload struct {
 		runtime.MemStats
 		Profile []memProfileRecord
 		NumGo   int
-	}{}
+	}
 	for {
 		if prof, ok := memProfile(s.MemRecordSize); ok {
 			payload.Profile = prof
