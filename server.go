@@ -25,8 +25,7 @@ type server struct {
 	ListenAddr string
 	// Tick is the duration between two websocket updates.
 	Tick time.Duration
-	// MemRecordSize is the maximum record size for
-	// memory profile entries.
+	// MemRecordSize is the maximum number of records a profile will return.
 	MemRecordSize int
 }
 
