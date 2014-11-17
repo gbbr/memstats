@@ -78,11 +78,13 @@ func (s server) ServeMemProfile(ws *websocket.Conn) {
 	payload := struct {
 		runtime.MemStats
 		Profile []memProfileRecord
+		NumGo   int
 	}{}
 	for {
 		if prof, ok := memProfile(s.MemRecordSize); ok {
 			payload.Profile = prof
 		}
+		payload.NumGo = runtime.NumGoroutine()
 		runtime.ReadMemStats(&payload.MemStats)
 		err := websocket.JSON.Send(ws, payload)
 		if err != nil {

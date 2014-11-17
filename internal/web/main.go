@@ -124,7 +124,7 @@ var rootView = `
 		</div>
 
 		<div id="memprofile">
-			<h2>Mem Profile Records</h2>
+			<h2>Mem Profile Records (goroutines: <%= NumGo %>)</h2>
 			<% _.each(Profile, function(data) { %>
 				<div class="group">
 					<div class="cell">Allocated: <%= data.AllocBytes %></div>
