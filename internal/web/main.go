@@ -134,7 +134,7 @@ var rootView = `
 					<div class="cell">Free objects: <%= data.FreeObjs %></div>
 					<div class="cell">In use objects: <%= data.InUseObjs %></div>
 					<br />
-					Items in callstack: <%= data.Callstack.length %>
+					Callstack Size: <%= data.Callstack.length %>
 					<% _.each(data.Callstack, function(funcName) { %>
 						<div class="cell">
 							<%= funcName %>
