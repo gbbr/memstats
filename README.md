@@ -14,6 +14,8 @@ of the main file and memory profiling information will be exposed via websockets
 
 To enable the webviewer run `memstats` in the command line.
 
+--
+
 ### Dummy program
 
 Write this program, and save it as _main.go_:
