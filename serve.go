@@ -1,10 +1,11 @@
 // Package memstats helps you monitor a running server's memory usage, visualize Garbage
-// Collector information, run stack traces and memory profiles. The default values are
-// configurable via the options provided by the API. To run the server, place this command
+// Collector information, run stack traces and memory profiles. To run the server, place this command
 // at the top of your application:
-//
-// Example running with defaults (websockets port :6061, refreshing every 2 seconds):
 // 	go memstats.Serve()
+// The next time you run your application, profiling is available via websockets on port 6061,
+// and once a client is connected it will send updates every 2 seconds. Defaults can be changed
+// by passing one or more of the APIs options as params to Serve. See the examples for each option.
+//
 // To use the provided webserver, run the command "memstat" once your applications starts
 // and has profiling enabled. To change HTTP port or connected to other sockets than default, see:
 //	memstats --help
