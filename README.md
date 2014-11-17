@@ -9,9 +9,9 @@ go install github.com/gbbr/memstats/...
 
 To run statistics in your program, include the package and put `go memstats.Serve()` at the top 
 of the main file and memory profiling information will be exposed via websockets.
+To enable the webviewer run `memstats` in the command line.  
 
-To enable the webviewer run `memstats` in the command line.
-
+For more configuration options and API, see [GoDoc page](http://godoc.org/github.com/gbbr/memstats)
 --
 
 #### Dummy program
@@ -32,7 +32,3 @@ func main() {
 Run `go run main.go` to start the program.  
 Run `memstats` to start the web viewer.  
 Open [http://localhost:6061](http://localhost:6061) in browser to view live memory statistics.   
-
---
-
-For more configuration options and API, see [GoDoc page](http://godoc.org/github.com/gbbr/memstats)
