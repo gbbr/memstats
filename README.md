@@ -1,5 +1,3 @@
-## memstats
-
 ### Installation
 
 ```bash
