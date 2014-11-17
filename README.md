@@ -5,7 +5,7 @@ go get github.com/gbbr/memstats/...
 go install github.com/gbbr/memstats/...
 ```
 
-### Usage
+### Basic usage
 
 To monitor your application:  
 * Import the package and add the line `go memstats.Serve()` into your code. 
