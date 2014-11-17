@@ -21,8 +21,12 @@ import (
 )
 
 type server struct {
-	ListenAddr    string
-	Tick          time.Duration
+	// ListenAddr is the address that the server listens on.
+	ListenAddr string
+	// Tick is the duration between two websocket updates.
+	Tick time.Duration
+	// MemRecordSize is the maximum record size for
+	// memory profile entries.
 	MemRecordSize int
 }
 
