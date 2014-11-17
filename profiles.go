@@ -4,13 +4,9 @@ import "runtime"
 
 // memProfileRecord holds information about a memory profile entry
 type memProfileRecord struct {
-	// Objects
-	AllocObjs int64
-	FreeObjs  int64
-	InUseObjs int64
-	// Byte values
-	AllocBytes int64
-	FreeBytes  int64
+	runtime.MemProfileRecord
+	// In use
+	InUseObjs  int64
 	InUseBytes int64
 	// Stack trace
 	Callstack []string
@@ -26,16 +22,10 @@ func memProfile(size int) (data []memProfileRecord, ok bool) {
 	prof := make([]memProfileRecord, len(record))
 	for i, e := range record {
 		prof[i] = memProfileRecord{
-			// Bytes
-			AllocBytes: e.AllocBytes,
-			FreeBytes:  e.FreeBytes,
-			InUseBytes: e.InUseBytes(),
-			// Objects
-			AllocObjs: e.AllocObjects,
-			FreeObjs:  e.FreeObjects,
-			InUseObjs: e.InUseObjects(),
-			// Stack
-			Callstack: resolveFuncs(e.Stack()),
+			MemProfileRecord: e,
+			InUseBytes:       e.InUseBytes(),
+			InUseObjs:        e.InUseObjects(),
+			Callstack:        resolveFuncs(e.Stack()),
 		}
 	}
 	return prof[:n], true
