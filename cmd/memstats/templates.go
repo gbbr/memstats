@@ -1,6 +1,8 @@
 package main
 
-var templateString = `
+import "html/template"
+
+var tpl = template.Must(template.New("name").Parse(`
 {{define "mainJS"}}
 	var ws = new WebSocket("ws://{{.}}/memstats-feed")
 	var tpl = _.template(document.getElementById("ms-viewer-template").innerHTML)
@@ -1622,4 +1624,4 @@ var templateString = `
     });
   }
 }.call(this));
-{{end}}`
+{{end}}`))
