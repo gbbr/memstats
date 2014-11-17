@@ -16,6 +16,7 @@ import (
 	"net"
 	"net/http"
 	"runtime"
+	"runtime/debug"
 	"time"
 
 	"golang.org/x/net/websocket"
@@ -63,16 +64,18 @@ func Serve(opts ...func(*server)) {
 func (s server) ServeMemProfile(ws *websocket.Conn) {
 	defer ws.Close()
 	var payload struct {
-		runtime.MemStats
-		Profile []memProfileRecord
-		NumGo   int
+		MemStats runtime.MemStats
+		Profiles []memProfileRecord
+		GCStats  debug.GCStats
+		NumGo    int
 	}
 	for {
 		if prof, ok := memProfile(s.MemRecordSize); ok {
-			payload.Profile = prof
+			payload.Profiles = prof
 		}
 		payload.NumGo = runtime.NumGoroutine()
 		runtime.ReadMemStats(&payload.MemStats)
+		debug.ReadGCStats(&payload.GCStats)
 		err := websocket.JSON.Send(ws, payload)
 		if err != nil {
 			break

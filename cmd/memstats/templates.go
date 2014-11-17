@@ -15,19 +15,23 @@ var tpl = template.Must(template.New("name").Parse(`
 			var memdata = JSON.parse(evt.data);
 			var humanized = _.clone(memdata);
 			
-			[ // Convert byte values to readable form.
-				"Alloc", "TotalAlloc", "Sys", "HeapAlloc", "HeapSys", "HeapIdle",
-				"HeapInuse", "HeapReleased", "StackInuse", "StackSys", "MSpanInuse",
-				"MSpanSys", "MCacheInuse", "MCacheSys", "NextGC"
-			].forEach(function (key) {
-				humanized[key] = bytesToSize(memdata[key]);
-			}); 
+			if (Array.isArray(memdata.MemStats)) {
+				[ // Convert byte values to readable form.
+					"Alloc", "TotalAlloc", "Sys", "HeapAlloc", "HeapSys", "HeapIdle",
+					"HeapInuse", "HeapReleased", "StackInuse", "StackSys", "MSpanInuse",
+					"MSpanSys", "MCacheInuse", "MCacheSys", "NextGC"
+				].forEach(function (key) {
+					if (memdata.MemStats[key]) {
+						humanized.MemStats[key] = bytesToSize(memdata.MemStats[key]);
+					}
+				}); 
+			}
 
 			// Humanize profile
-			if (Array.isArray(humanized.Profile)) {
-				humanized.Profile.forEach(function (record, index) {
+			if (Array.isArray(memdata.Profiles)) {
+				humanized.Profiles.forEach(function (record, index) {
 					["AllocBytes", "FreeBytes", "InUseBytes"].forEach(function (key) {
-						humanized.Profile[index][key] = bytesToSize(memdata.Profile[index][key]);
+						humanized.Profiles[index][key] = bytesToSize(memdata.Profiles[index][key]);
 					});
 				});
 			}
@@ -84,46 +88,46 @@ var tpl = template.Must(template.New("name").Parse(`
 		<div class="group">
 			<h3>General</h3>
 			<div class="cell">
-				Allocated and using: <%= Alloc %>
+				Allocated and using: <%= MemStats.Alloc %>
 			</div>
 			<div class="cell">
-				Total + Freed: <%= TotalAlloc %>
+				Total + Freed: <%= MemStats.TotalAlloc %>
 			</div>
 			<div class="cell">
-				System: <%= Sys %>
+				System: <%= MemStats.Sys %>
 			</div>
 			<br />
 			<div class="cell">
-				Lookups: <%= Lookups %>
+				Lookups: <%= MemStats.Lookups %>
 			</div>
 			<div class="cell">
-				Frees: <%= Frees %>
+				Frees: <%= MemStats.Frees %>
 			</div>
 			<div class="cell">
-				mallocs: <%= Mallocs %>
+				mallocs: <%= MemStats.Mallocs %>
 			</div>
 		</div>
 
 		<div class="group">
 			<h3>Heap</h3>
 			<div class="cell">
-				Allocated and using: <%= HeapAlloc %>
+				Allocated and using: <%= MemStats.HeapAlloc %>
 			</div>
 			<div class="cell">
-				System: <%= HeapSys %>
+				System: <%= MemStats.HeapSys %>
 			</div>
 			<div class="cell">
-				Idle: <%= HeapIdle %>
+				Idle: <%= MemStats.HeapIdle %>
 			</div>
 			<div class="cell">
-				In use: <%= HeapInuse %>
+				In use: <%= MemStats.HeapInuse %>
 			</div>
 			<div class="cell">
-				Released: <%= HeapReleased %>
+				Released: <%= MemStats.HeapReleased %>
 			</div>
 			<br />
 			<div class="cell">
-				Objects: <%= HeapObjects %>
+				Objects: <%= MemStats.HeapObjects %>
 			</div>
 		</div>
 
@@ -134,63 +138,63 @@ var tpl = template.Must(template.New("name").Parse(`
 			<!--	Sys is bytes obtained from system.-->
 			<div class="cell">
 				Stack:
-				<%= StackInuse %> of <%= StackSys %>
+				<%= MemStats.StackInuse %> of <%= MemStats.StackSys %>
 			</div>
 			<div class="cell">
 				MSpan:
-				<%= MSpanInuse %> of <%= MSpanSys %>
+				<%= MemStats.MSpanInuse %> of <%= MemStats.MSpanSys %>
 			</div>
 			<div class="cell">
-				MCache: <%= MCacheInuse %> of <%= MCacheSys %>
+				MCache: <%= MemStats.MCacheInuse %> of <%= MemStats.MCacheSys %>
 			</div>
 			<br />
 			<div class="cell">
-				BuckHashSys: <%= BuckHashSys %>
+				BuckHashSys: <%= MemStats.BuckHashSys %>
 			</div>
 			<div class="cell">
-				GCSys: <%= GCSys %>
+				GCSys: <%= MemStats.GCSys %>
 			</div>
 			<div class="cell">
-				Other: <%= OtherSys %>
+				Other: <%= MemStats.OtherSys %>
 			</div>
 		</div>
 
 		<div class="group">
 			<h3>Garbage collector</h2>
 			<div class="cell">
-				Next run: <%= NextGC %>
+				Next run: <%= MemStats.NextGC %>
 			</div>
 			<div class="cell">
-				Last run: <%= LastGC %>
+				Last run: <%= MemStats.LastGC %>
 			</div>
 			<div class="cell">
-				Pause: <%= PauseTotalNs %>
+				Pause: <%= MemStats.PauseTotalNs %>
 			</div>
 			<div class="cell">
-				Runs: <%= NumGC %>
+				Runs: <%= MemStats.NumGC %>
 			</div>
 			<br />
 			<div class="cell">
-				Enabled: <%= EnableGC %>
+				Enabled: <%= MemStats.EnableGC %>
 			</div>
 			<div class="cell">
-				Debug: <%= DebugGC %>
+				Debug: <%= MemStats.DebugGC %>
 			</div>
 		</div>
 
 		<div id="memprofile">
 			<h2>Mem Profile Records (goroutines: <%= NumGo %>)</h2>
-			<% _.each(Profile, function(data) { %>
+			<% _.each(Profiles, function(profile) { %>
 				<div class="group">
-					<div class="cell">Allocated: <%= data.AllocBytes %></div>
-					<div class="cell">In use: <%= data.InUseBytes %></div>
-					<div class="cell">Free: <%= data.FreeBytes %></div>
-					<div class="cell">Objects: <%= data.AllocObjs %></div>
-					<div class="cell">Free objects: <%= data.FreeObjs %></div>
-					<div class="cell">In use objects: <%= data.InUseObjs %></div>
+					<div class="cell">Allocated: <%= profile.AllocBytes %></div>
+					<div class="cell">In use: <%= profile.InUseBytes %></div>
+					<div class="cell">Free: <%= profile.FreeBytes %></div>
+					<div class="cell">Objects: <%= profile.AllocObjs %></div>
+					<div class="cell">Free objects: <%= profile.FreeObjs %></div>
+					<div class="cell">In use objects: <%= profile.InUseObjs %></div>
 					<br />
-					Callstack Size: <%= data.Callstack.length %>
-					<% _.each(data.Callstack, function(funcName) { %>
+					Callstack Size: <%= profile.Callstack.length %>
+					<% _.each(profile.Callstack, function(funcName) { %>
 						<div class="cell">
 							<%= funcName %>
 						</div>
