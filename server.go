@@ -68,7 +68,7 @@ func (s server) ServeMemStats(ws *websocket.Conn) {
 		Profile []memProfile
 	}{}
 	for {
-		if data, ok := runMemProfile(s.MemRecordSize); ok {
+		if data, ok := readMemProfile(s.MemRecordSize); ok {
 			payload.Profile = data
 		}
 		runtime.ReadMemStats(&payload.MemStats)
@@ -88,7 +88,7 @@ type memProfile struct {
 	Callstack             []string
 }
 
-func runMemProfile(size int) (data []memProfile, ok bool) {
+func readMemProfile(size int) (data []memProfile, ok bool) {
 	record := make([]runtime.MemProfileRecord, size)
 	n, ok := runtime.MemProfile(record, false)
 	if !ok {
