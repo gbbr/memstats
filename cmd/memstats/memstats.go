@@ -7,8 +7,6 @@ import (
 	"log"
 	"net"
 	"net/http"
-
-	"github.com/gbbr/memstats/internal/web"
 )
 
 var (
@@ -33,7 +31,7 @@ func main() {
 	if len(hst) == 0 || err != nil {
 		log.Fatal("sockaddr must be host[:port]. ERR: %s", err)
 	}
-	tpl, err = web.Template()
+	tpl, err = template.New("name").Parse(templateString)
 	if err != nil {
 		log.Fatal(err)
 	}
