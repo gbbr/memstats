@@ -9,9 +9,7 @@ import (
 )
 
 var (
-	// laddr is the address the HTTP templates will be served on.
 	laddr = flag.String("http", ":8080", "HTTP address to listen on")
-	// saddr is the address the HTTP page will attempt to connect to via websockets.
 	saddr = flag.String("sock", "localhost:6061", "Adress the WebSockets listen on.")
 )
 
