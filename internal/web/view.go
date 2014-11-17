@@ -29,7 +29,7 @@ var mainJS = `
 					});
 				});
 			}
-			console.log(humanized.Profile);
+			console.log(humanized);
 
 			document.getElementById("ms-viewer").innerHTML = tpl(humanized);
 		}
