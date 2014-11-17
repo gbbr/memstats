@@ -16,7 +16,7 @@ To enable the webviewer run `memstats` in the command line.
 
 ### Dummy program
 
-Example program:
+Write this program, and save it as _main.go_:
 
 ```go
 // filename: main.go
