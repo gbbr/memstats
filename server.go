@@ -1,4 +1,4 @@
-package dizzy
+package memstats
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/gbbr/dizzy/internal/web"
+	"github.com/gbbr/memstats/internal/web"
 	"golang.org/x/net/websocket"
 )
 
