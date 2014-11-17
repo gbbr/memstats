@@ -43,7 +43,7 @@ func Serve(opts ...func(*server)) {
 
 	mux := http.NewServeMux()
 	mux.Handle("/", s)
-	mux.Handle("/memstats-feed", websocket.Handler(s.ServeMemStats))
+	mux.Handle("/memstats-feed", websocket.Handler(s.ServeMemProfile))
 	if err = http.Serve(ln, mux); err != nil {
 		log.Fatalf("memstat: %s", err)
 	}
@@ -67,9 +67,9 @@ func (s server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-// ServeMemStats serves the connected socket with a snapshot of
+// ServeMemProfile serves the connected socket with a snapshot of
 // runtime.MemStats
-func (s server) ServeMemStats(ws *websocket.Conn) {
+func (s server) ServeMemProfile(ws *websocket.Conn) {
 	defer ws.Close()
 	payload := struct {
 		runtime.MemStats
