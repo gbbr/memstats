@@ -1,3 +1,6 @@
+// Package memstats helps you monitor a running server's memory usage, visualize Garbage
+// Collector information, run stack traces and memory profiles. The default values are
+// configurable via the options provided by the API.
 package memstats
 
 import (
