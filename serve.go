@@ -3,9 +3,11 @@
 // configurable via the options provided by the API. To run the server, place this command
 // at the top of your application:
 //
-// Example running with defaults (HTTP port :6061, refreshing every 2 seconds):
+// Example running with defaults (websockets port :6061, refreshing every 2 seconds):
 // 	go memstats.Serve()
-// By default, the memory profile will be viewable on HTTP port :6061
+// To use the provided webserver, run the command "memstat" once your applications runs
+// with profling added. To see all params type:
+//	memstats --help
 package memstats
 
 import (
