@@ -96,10 +96,16 @@ func (s server) ServeMemProfile(ws *websocket.Conn) {
 
 // memProfileRecord holds information about a memory profile entry
 type memProfileRecord struct {
-	AllocBytes, FreeBytes int64
-	AllocObjs, FreeObjs   int64
-	InUseBytes, InUseObjs int64
-	Callstack             []string
+	// Objects
+	AllocObjs int64
+	FreeObjs  int64
+	InUseObjs int64
+	// Byte values
+	AllocBytes int64
+	FreeBytes  int64
+	InUseBytes int64
+	// Stack trace
+	Callstack []string
 }
 
 // memProfile returns a slice of memProfileRecord from the current memory profile.
