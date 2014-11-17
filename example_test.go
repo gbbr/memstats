@@ -17,3 +17,9 @@ func ExampleListenAddr() {
 	// server at the passed in address.
 	go memstats.Serve(memstats.ListenAddr(":7777"))
 }
+
+func ExampleServe() {
+	// Place this line at the top of your application to
+	// start a live web visualization of memory profiling.
+	go memstats.Serve()
+}
