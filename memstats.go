@@ -1,4 +1,3 @@
-//
 // Package memstats helps you monitor a running server's memory usage, visualize Garbage
 // Collector information, run stack traces and memory profiles. The default values are
 // configurable via the options provided by the API. To run the server, place this command
@@ -7,7 +6,6 @@
 // Example running with defaults (HTTP port :6061, refreshing every 2 seconds):
 // 	go memstats.Serve()
 // By default, the memory profile will be viewable on HTTP port :6061
-//
 package memstats
 
 import (
