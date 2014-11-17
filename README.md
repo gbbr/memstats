@@ -4,10 +4,10 @@ Example program:
 // filename: main.go
 package main
 
-import "github.com/gbbr/memstats"
+import "github.com/gbbr/dizzy"
 
 func main() {
-	memstats.Serve()
+	dizzy.Serve()
 }
 ```
 
