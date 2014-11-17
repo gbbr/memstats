@@ -1,4 +1,4 @@
-package memstats
+package dizzy
 
 import "runtime"
 
