@@ -7,9 +7,10 @@ go install github.com/gbbr/memstats/...
 
 ### Usage
 
-To run statistics in your program, include the package and put `go memstats.Serve()` at the top 
-of the main file and memory profiling information will be exposed via websockets.
-To enable the webviewer run `memstats` in the command line.  
+To monitoring in your application:  
+* Import the package and add the line `go memstats.Serve()` into your code. 
+* Run you server or application. Now, memory profiling information is available via websockets.  
+* Run the provided web server by executing `memstats` in the command line.  
 
 For more configuration options and API, see the [documentation](http://godoc.org/github.com/gbbr/memstats).   
 
