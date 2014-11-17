@@ -100,7 +100,7 @@ type memProfileRecord struct {
 func memProfile(size int) (data []memProfileRecord, ok bool) {
 	record := make([]runtime.MemProfileRecord, size)
 	n, ok := runtime.MemProfile(record, false)
-	if !ok {
+	if !ok || n == 0 {
 		return nil, false
 	}
 	prof := make([]memProfileRecord, len(record))
