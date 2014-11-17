@@ -5,8 +5,8 @@
 //
 // Example running with defaults (websockets port :6061, refreshing every 2 seconds):
 // 	go memstats.Serve()
-// To use the provided webserver, run the command "memstat" once your applications runs
-// with profling added. To see all params type:
+// To use the provided webserver, run the command "memstat" once your applications starts
+// and has profiling enabled. To change HTTP port or connected to other sockets than default, see:
 //	memstats --help
 package memstats
 
@@ -125,15 +125,16 @@ func humanizeStack(stk []uintptr) []string {
 }
 
 // ListenAddr sets the address that the server will listen on for HTTP
-// and WebSockets connections. The default port is :6061.
+// and WebSockets connections. ListenAddr is one of the options that can
+// be provided to Serve.
 func ListenAddr(addr string) func(*server) {
 	return func(s *server) {
 		s.ListenAddr = addr
 	}
 }
 
-// Tick sets the frequency at which the websockets will send updates.
-// The default setting is 2 * time.Second.
+// Tick sets the frequency at which the websockets will send updates. Tick
+// is one of the options that can be provided to Serve.
 func Tick(d time.Duration) func(*server) {
 	return func(s *server) {
 		s.Tick = d
