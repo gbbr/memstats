@@ -2,7 +2,7 @@ package web
 
 var mainJS = `
 {{define "mainJS"}}
-	var ws = new WebSocket("ws://" + window.location.host + "/memstats-feed")
+	var ws = new WebSocket("ws://{{.}}/memstats-feed")
 	var tpl = _.template(document.getElementById("ms-viewer-template").innerHTML)
 
 	// SOCKET /memstats-feeds

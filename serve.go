@@ -9,14 +9,12 @@
 package memstats
 
 import (
-	"fmt"
 	"log"
 	"net"
 	"net/http"
 	"runtime"
 	"time"
 
-	"github.com/gbbr/memstats/internal/web"
 	"golang.org/x/net/websocket"
 )
 
@@ -51,22 +49,9 @@ func Serve(opts ...func(*server)) {
 	s.ListenAddr = ln.Addr().String()
 
 	mux := http.NewServeMux()
-	mux.Handle("/", s)
 	mux.Handle("/memstats-feed", websocket.Handler(s.ServeMemProfile))
 	if err = http.Serve(ln, mux); err != nil {
 		log.Fatalf("memstat: %s", err)
-	}
-}
-
-// ServeHTTP serves the front-end HTML/JS viewer
-func (s server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	t, err := web.Template()
-	if err != nil {
-		fmt.Fprintf(w, "Error parsing template: %s", err)
-		return
-	}
-	if err := t.ExecuteTemplate(w, "main", s); err != nil {
-		fmt.Fprintf(w, "Error parsing template: %s", err)
 	}
 }
 
@@ -91,6 +76,50 @@ func (s server) ServeMemProfile(ws *websocket.Conn) {
 		}
 		<-time.After(s.Tick)
 	}
+}
+
+// memProfileRecord holds information about a memory profile entry
+type memProfileRecord struct {
+	runtime.MemProfileRecord
+	// In use
+	InUseObjs  int64
+	InUseBytes int64
+	// Stack trace
+	Callstack []string
+}
+
+// memProfile returns a slice of memProfileRecord from the current memory profile.
+func memProfile(size int) (data []memProfileRecord, ok bool) {
+	record := make([]runtime.MemProfileRecord, size)
+	n, ok := runtime.MemProfile(record, false)
+	if !ok || n == 0 {
+		return nil, false
+	}
+	prof := make([]memProfileRecord, len(record))
+	for i, e := range record {
+		prof[i] = memProfileRecord{
+			MemProfileRecord: e,
+			InUseBytes:       e.InUseBytes(),
+			InUseObjs:        e.InUseObjects(),
+			Callstack:        humanizeStack(e.Stack()),
+		}
+	}
+	return prof[:n], true
+}
+
+// humanizeStack resolves a stracktrace to an array of function names
+func humanizeStack(stk []uintptr) []string {
+	fnpc := make([]string, len(stk))
+	var n int
+	for i, pc := range stk {
+		fn := runtime.FuncForPC(pc)
+		if fn == nil || pc == 0 {
+			break
+		}
+		fnpc[i] = fn.Name()
+		n++
+	}
+	return fnpc[:n]
 }
 
 // ListenAddr sets the address that the server will listen on for HTTP

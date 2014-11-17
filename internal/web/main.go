@@ -148,7 +148,7 @@ var rootView = `
 		<div id="ms-viewer"></div>
 
 		<script>{{template "underscoreJS"}}</script>
-		<script>{{template "mainJS"}}</script>
+		<script>{{template "mainJS" .}}</script>
 	</body>
 </html>
 {{end}}
