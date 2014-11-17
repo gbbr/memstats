@@ -8,7 +8,7 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/gbbr/memstats/internal/web"
+	"github.com/gbbr/dizzy/internal/web"
 	"golang.org/x/net/websocket"
 )
 
