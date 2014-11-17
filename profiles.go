@@ -2,14 +2,6 @@ package dizzy
 
 import "runtime"
 
-// memProfile holds information about a memory profile entry
-type memProfile struct {
-	AllocBytes, FreeBytes int64
-	AllocObjs, FreeObjs   int64
-	InUseBytes, InUseObjs int64
-	Callstack             []string
-}
-
 // resolveFuncs resolves a stracktrace to an array of function names
 func resolveFuncs(stk []uintptr) []string {
 	fnpc := make([]string, len(stk))
@@ -23,6 +15,14 @@ func resolveFuncs(stk []uintptr) []string {
 		n++
 	}
 	return fnpc[:n]
+}
+
+// memProfile holds information about a memory profile entry
+type memProfile struct {
+	AllocBytes, FreeBytes int64
+	AllocObjs, FreeObjs   int64
+	InUseBytes, InUseObjs int64
+	Callstack             []string
 }
 
 func runMemProfile(size int) (data []memProfile, ok bool) {
