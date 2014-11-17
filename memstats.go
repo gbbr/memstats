@@ -124,8 +124,18 @@ func resolveFuncs(stk []uintptr) []string {
 	return fnpc[:n]
 }
 
+// ListenAddr sets the address that the server will listen on for HTTP
+// and WebSockets connections. The default port is :6061.
 func ListenAddr(addr string) func(*server) {
 	return func(s *server) {
 		s.ListenAddr = addr
+	}
+}
+
+// Tick sets the frequency at which the websockets will send updates.
+// The default setting is 2 * time.Second.
+func Tick(d time.Duration) func(*server) {
+	return func(s *server) {
+		s.Tick = d
 	}
 }
