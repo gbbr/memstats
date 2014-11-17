@@ -3,22 +3,7 @@ package web
 var mainJS = `
 {{define "mainJS"}}
 	var ws = new WebSocket("ws://" + window.location.host + "/memstats-feed")
-	var wmem = new WebSocket("ws://" + window.location.host + "/memprofile-feed")
 	var tpl = _.template(document.getElementById("ms-viewer-template").innerHTML)
-
-	// SOCKET /memprofile-feeds
-	wmem.onopen = function () {
-		// ON MESSAGE 
-		wmem.onmessage = function (evt) {
-			var memprof = JSON.parse(evt.data);
-			console.log(memprof);
-		}
-
-		// ON CLOSE /memstats-feeds
-		wmem.onclose = function () {
-			console.log("MEMSTAT: Disconnected.")
-		}
-	}
 
 	// SOCKET /memstats-feeds
 	ws.onopen = function () {

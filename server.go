@@ -42,7 +42,6 @@ func Serve(opts ...func(*server)) {
 	mux := http.NewServeMux()
 	mux.Handle("/", s)
 	mux.Handle("/memstats-feed", websocket.Handler(s.ServeMemStats))
-	mux.Handle("/memprofile-feed", websocket.Handler(s.ServeMemProfile))
 	if err = http.Serve(ln, mux); err != nil {
 		log.Fatalf("memstat: %s", err)
 	}
@@ -64,10 +63,16 @@ func (s server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 // runtime.MemStats
 func (s server) ServeMemStats(ws *websocket.Conn) {
 	defer ws.Close()
-	var buf runtime.MemStats
+	payload := struct {
+		runtime.MemStats
+		Profile []memProfile
+	}{}
 	for {
-		runtime.ReadMemStats(&buf)
-		err := websocket.JSON.Send(ws, buf)
+		if data, ok := runMemProfile(s.MemRecordSize); ok {
+			payload.Profile = data
+		}
+		runtime.ReadMemStats(&payload.MemStats)
+		err := websocket.JSON.Send(ws, payload)
 		if err != nil {
 			break
 		}
@@ -75,18 +80,48 @@ func (s server) ServeMemStats(ws *websocket.Conn) {
 	}
 }
 
-// ServeMemProfile serves the socket with memory profile blocks
-func (s server) ServeMemProfile(ws *websocket.Conn) {
-	defer ws.Close()
-	for {
-		if data, ok := runMemProfile(s.MemRecordSize); ok {
-			err := websocket.JSON.Send(ws, data)
-			if err != nil {
-				break
-			}
-		}
-		<-time.After(s.Tick)
+// memProfile holds information about a memory profile entry
+type memProfile struct {
+	AllocBytes, FreeBytes int64
+	AllocObjs, FreeObjs   int64
+	InUseBytes, InUseObjs int64
+	Callstack             []string
+}
+
+func runMemProfile(size int) (data []memProfile, ok bool) {
+	record := make([]runtime.MemProfileRecord, size)
+	n, ok := runtime.MemProfile(record, false)
+	if !ok {
+		return nil, false
 	}
+	prof := make([]memProfile, len(record))
+	for i, e := range record {
+		prof[i] = memProfile{
+			AllocBytes: e.AllocBytes,
+			AllocObjs:  e.AllocObjects,
+			FreeBytes:  e.FreeBytes,
+			FreeObjs:   e.FreeObjects,
+			InUseBytes: e.InUseBytes(),
+			InUseObjs:  e.InUseObjects(),
+			Callstack:  resolveFuncs(e.Stack()),
+		}
+	}
+	return prof[:n], true
+}
+
+// resolveFuncs resolves a stracktrace to an array of function names
+func resolveFuncs(stk []uintptr) []string {
+	fnpc := make([]string, len(stk))
+	var n int
+	for i, pc := range stk {
+		fn := runtime.FuncForPC(pc)
+		if fn == nil || pc == 0 {
+			break
+		}
+		fnpc[i] = fn.Name()
+		n++
+	}
+	return fnpc[:n]
 }
 
 func ListenAddr(addr string) func(*server) {
