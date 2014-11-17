@@ -15,17 +15,15 @@ var tpl = template.Must(template.New("name").Parse(`
 			var memdata = JSON.parse(evt.data);
 			var humanized = _.clone(memdata);
 			
-			if (Array.isArray(memdata.MemStats)) {
-				[ // Convert byte values to readable form.
-					"Alloc", "TotalAlloc", "Sys", "HeapAlloc", "HeapSys", "HeapIdle",
-					"HeapInuse", "HeapReleased", "StackInuse", "StackSys", "MSpanInuse",
-					"MSpanSys", "MCacheInuse", "MCacheSys", "NextGC"
-				].forEach(function (key) {
-					if (memdata.MemStats[key]) {
-						humanized.MemStats[key] = bytesToSize(memdata.MemStats[key]);
-					}
-				}); 
-			}
+			[ // Convert byte values to readable form.
+				"Alloc", "TotalAlloc", "Sys", "HeapAlloc", "HeapSys", "HeapIdle",
+				"HeapInuse", "HeapReleased", "StackInuse", "StackSys", "MSpanInuse",
+				"MSpanSys", "MCacheInuse", "MCacheSys", "NextGC"
+			].forEach(function (key) {
+				if (memdata.MemStats[key]) {
+					humanized.MemStats[key] = bytesToSize(memdata.MemStats[key]);
+				}
+			}); 
 
 			// Humanize profile
 			if (Array.isArray(memdata.Profiles)) {
